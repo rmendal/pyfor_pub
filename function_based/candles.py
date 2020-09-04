@@ -8,7 +8,10 @@ from oandapyV20 import API
 import oandapyV20.endpoints.instruments as instruments
 import numpy as np
 
-logging.basicConfig(format='\n%(asctime)s %(levelname)s: %(message)s', datefmt='%m/%d/%Y %H:%M:%S', filename="/home/rob/git/pyfor/function_based/log/pyfor.log", filemode='a', level=logging.WARNING)
+logging.basicConfig(format='\n%(asctime)s %(levelname)s: %(message)s',
+                    datefmt='%m/%d/%Y %H:%M:%S',
+                    filename="/home/rob/git/pyfor/function_based/log/pyfor.log",
+                    filemode='a', level=logging.WARNING)
 u = UserVals
 
 
@@ -49,8 +52,3 @@ class Candles:
         for x in range(0, u.count):
             close_list.append(self.close(x))
         return np.asarray(close_list)
-
-# TODO: For testing only, remove from final release
-# p = Candles()
-# print(p.get_candles())
-# print([round(data, 5) for data in p.get_candles().tolist()])

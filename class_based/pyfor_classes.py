@@ -70,27 +70,6 @@ class Trader:
         #working_balance = starting_balance
         return starting_balance
 
-    # TODO: If last 2 trades were losses kill app and
-    def kill_switch(self, starting_balance):
-
-        killswitch_balance = (starting_balance - (starting_balance * 0.01))
-        current_balance = int(float(r.response.get("account", {}).get("balance")))
-
-        if current_balance <= killswitch_balance:
-            sender = "pyforx.bot@gmail.com"
-            recipient = "rmendal@gmail.com"
-            password = "!9unsCRUpuloUSLY%2&9SemIfABUlous!6"
-            subject = "Forex Bot Killswitch Activated"
-            text = f"1% loss to your account. Balance is now ${float(current_balance)}"
-            smtp_server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-            smtp_server.login(sender, password)
-            message = f"Subject: {subject}\n{text}"
-            smtp_server.sendmail(sender, recipient, message)
-            smtp_server.close()
-            exit()
-        else:
-            pass
-
     def long(self):
         pass
 
@@ -135,6 +114,6 @@ if __name__ == "__main__":
     # chosen_pair = pairsList[cutie.select(pairsList)]
     # u.pair = chosen_pair
     # u.count = input("Candle count: ")
-    
+
     # print(f"\nYou're trading {u.pair}...")
     # print(f"Candle count is {u.count}")

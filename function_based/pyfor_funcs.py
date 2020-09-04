@@ -1,10 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-# Setting a venv for the project https://code.visualstudio.com/docs/python/environments
-"""
-Goal is $5864.50/year so $18.80/day, roughly 16 pips/day if using EUR/USD
-"""
 # Class Imports
 from strategy import Strategies
 from candles import Candles
@@ -15,19 +11,17 @@ import datetime
 import pytz
 import smtplib
 import logging
-import sys
 import re
 import json
 from time import sleep
 
 # Non-Standard Imports
-# import cutie # Used for currency menu on initial start up
+# import cutie # Used for currency menu on initial start up not used for now
 
 # OandapyV20 specific imports
 import oandapyV20
 from oandapyV20 import API
 import oandapyV20.endpoints.accounts as accounts
-# import oandapyV20.endpoints.instruments as instruments
 import oandapyV20.endpoints.pricing as pricing
 import oandapyV20.endpoints.orders as orders
 from oandapyV20.contrib.requests import MarketOrderRequest
@@ -35,8 +29,7 @@ import oandapyV20.endpoints.trades as trades
 from oandapyV20.exceptions import V20Error
 import oandapyV20.types as tp
 
-"""TODO: Change log level to WARNING before launching. Currently set to DEBUG
-for testing"""
+
 logging.basicConfig(format='\n%(asctime)s %(levelname)s : %(message)s',
                     datefmt='%m/%d/%Y %H:%M:%S',
                     filename="/home/rob/git/pyfor/function_based/log/pyfor.log",
@@ -45,7 +38,7 @@ logging.basicConfig(format='\n%(asctime)s %(levelname)s : %(message)s',
 #############
 # VARIABLES #
 #############
-
+# Used for Cutie menu, not being used now, maybe later
 # Major and minor pairs. No exotics at this time
 # pairsList = ["EUR/USD", "USD/JPY", "GBP/USD", "USD/CHF", "USD/CAD", "AUD/USD", "NZD/USD", "EUR/GBP", "EUR/AUD",
 #              "GBP/JPY", "CHF/JPY", "NZD/JPY", "GBP/CAD"]
@@ -73,27 +66,6 @@ def get_balance():
         return float(format(balance, '.2f'))
     except Exception:
         logging.exception('Getting account balance failed...')
-
-# def circuit_breaker():
-#     """
-#     If 2% of account balance is lost send email stating such along with new
-#     balance and exit app. Assumption is that things are trending poorly
-#     and/or the strategy isn't working
-#     """
-#     current_balance = get_balance()
-#     # killswitch_balance = (current_balance - (current_balance * 0.01))
-
-#     sender = "pyforx.bot@gmail.com"
-#     recipient = "redacted"
-#     password = "redacted"
-#     subject = "Forex Bot Killswitch Activated"
-#     text = f"2% loss to your account. Balance is now ${current_balance}. The app has been terminated"
-#     smtp_server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-#     smtp_server.login(sender, password)
-#     message = f"Subject: {subject}\n{text}"
-#     smtp_server.sendmail(sender, recipient, message)
-#     smtp_server.close()
-#     sys.exit(1)
 
 
 def check_open_trades():
@@ -217,8 +189,7 @@ def position_size():
 
 
 def go_long():
-    """ TODO: The next 7 lines get the current bid price, not the closeout.
-    There is likely an easier way to do this."""
+    # TODO: refactor this
     params = {"instruments": u.pair}
     r = pricing.PricingInfo(accountID=u.accountID, params=params)
     client.request(r)
@@ -251,8 +222,7 @@ def go_long():
 
 
 def go_short():
-    """ TODO: The next 7 lines get the current ask price, not the closeout.
-    There is likely an easier way to do this."""
+    # TODO: refactor this
     params = {"instruments": u.pair}
     r = pricing.PricingInfo(accountID=u.accountID, params=params)
     client.request(r)
@@ -294,7 +264,7 @@ def trade():
     open_trades = client.request(acct_deets).get("account").get("openTradeCount")
 
     # While market is open, trade, else sleep
-    if check_time() == True and open_trades == 0:
+    if check_time() is True and open_trades == 0:
         print("Market is open. Looking for trades.")
         params = {"instruments": u.pair}
 
@@ -365,19 +335,11 @@ def trade():
         print("Checking open trades...")
         check_open_trades()
 
-    # elif open_trades > 0:
-    #     # TODO: Print trade details here? Unrealized profit/loss?
-    #     print ("You have an open trade. Will keep checking back...")
-    #     sleep (300) #5 mins
-    #     trade()
-
 
 if __name__ == "__main__":
-    # Ask for currency pair and candle count then assign it to UserVals
-    # http://bit.ly/2oVCQS4 For how to use the class functions
     """
     This is for choosing the pair when the app starts as opposed to setting it
-    manually in init
+    manually in init. I don't want this to be interactive for now.
     u = UserVals()
     print("What pair are you trading today?")
     chosen_pair = pairsList[cutie.select(pairsList)]
