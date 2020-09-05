@@ -1,6 +1,3 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-
 # Class Imports
 from strategy import Strategies
 from candles import Candles
